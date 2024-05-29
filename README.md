@@ -21,3 +21,15 @@
 ### Añadido metodo getDaysView() para la vista de los dias del calendario.
 
 ### Añadidas listas de string con los nombres de los dias y los meses.
+
+## Añadidos componentes y funcionalidades
+
+### Creado componente CardView: visualiza dias del calendario.
+
+### Creado componente ContentDayView: visualiza el contenido de cada dia dentro de card.
+
+### Creado componente RowsNameDaysCalendar: Vistas de nombres de los dias de la semana
+
+### Creado archivo data.js para datos de prueba
+
+### Creado archivo contentService.js: acceso a datos de prueba
