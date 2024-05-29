@@ -1,3 +1,3 @@
 export const CalendarApp = () => {
-  return <div>CalendarApp</div>;
+  return <div className="text-3xl ">CalendarApp</div>;
 };
