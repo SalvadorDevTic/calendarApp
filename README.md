@@ -33,3 +33,9 @@
 ### Creado archivo data.js para datos de prueba
 
 ### Creado archivo contentService.js: acceso a datos de prueba
+
+## Añadido formShiftCalendar y shiftsService.js
+
+### Creado y maquetado inicial de componente formShiftCalendar
+
+### Creado y desarrollando lógica para crear horario completo por rango en shiftsService.js

@@ -17,10 +17,14 @@ export const CalendarView = () => {
   const [daysView, setDaysView] = useState([]);
   const [content, setContent] = useState([]);
 
+  const getContdata = async () => {
+    setContent(await getAllContent());
+  };
+
   useEffect(() => {
     let aux = new Date();
     setDaysView(getViewCalendar(aux.getFullYear(), aux.getMonth()));
-    setContent(getAllContent());
+    getContdata();
   }, []);
 
   const handlerMonthView = ({ target }) => {

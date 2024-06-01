@@ -1,4 +1,4 @@
-import { contentCalendarDays } from "../data";
+import { contentCalendarDays } from "../data/data";
 
 export const getAllContent = () => {
   return contentCalendarDays;
