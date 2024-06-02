@@ -1,31 +1,54 @@
-const obtenerTsOfStringDate = (st) => {
+import { listShifts } from "../data/data";
+
+const getTsDateForm = (st) => {
   let temp = st.split("-");
-  return new Date().setFullYear(
+  return new Date(
     parseInt(temp[0]),
     parseInt(temp[1]) - 1,
-    parseInt(temp[2])
-  );
+    parseInt(temp[2]),
+    0
+  ).getTime()
 };
+
+
+
 export const createShiftsForm = (jsonF) => {
+
+  let listShifts = listShifts
   const oneDay = 86400000;
   //FORMATEAMOS DATOS:
+
   //creamos rango completo en time-stamp
-  let auxFromTs = obtenerTsOfStringDate(jsonF.range.from);
-  let auxToTs = obtenerTsOfStringDate(jsonF.range.to);
-  //Preferencias turnos empleados:
+  let auxFromTs = getTsDateForm(jsonF.range.from);
+  let auxToTs = getTsDateForm(jsonF.range.to);
+  //Preferencias generales de turnos empleados:
   let quantityUserM = jsonF.quantityUserShifts.m;
   let quantityUsert = jsonF.quantityUserShifts.t;
-  //Preferencias empleados
+  //Preferencias generales de empleados fijos
   let quantityDaysFree = jsonF.quantityDaysFree;
-  //Preferencias dias cerrados
+  //Preferencias generales dias cerrados
   let daysClosing =
     jsonF.daysClosingShop.length > 0 ? jsonF.daysClosingShop : undefined;
+  //Hay temporadas?
   let isSeason = jsonF.ruleSeason.length > 0 ? jsonF.ruleSeason : undefined;
+  //Hay dias de cierre total o parcial?    
+  let listFormatTsDaysClosing = jsonF.daysClosingShop.length > 0 ? jsonF.daysClosingShop.map((d)=>{
+    return {...d, dateTs: getTsDateForm(d.date)}
+   }) : undefined;
+
+
 
   //Iniciamos array de contents
   let contents = [];
+
+//************  WHILE-INICIO  *************
+// ****************************************
+
   //CREAR ARRAY DE CONTENTS
   while (auxFromTs <= auxToTs) {
+
+    //VARIABLES LOCALES WHILE
+    let isClosingDay = undefined;
     let auxDate = new Date(auxFromTs);
     let content = {
       id: auxFromTs,
@@ -36,29 +59,56 @@ export const createShiftsForm = (jsonF) => {
       },
     };
 
+
     //************************** */
-    //Aqui maneja las condiciones para crear los turnos...
+    //LOGICA WHILE...
+  
+    // Existen dias de cierre total o parcial?
+    isClosingDay = listFormatTsDaysClosing?.find((d)=>
+      d.dateTs== auxFromTs
+    )
+
+    //Si existen, los añadimos al content
+    if (isClosingDay) {
+      auxFromTs+=oneDay
+      console.log('dentro')
+      content = { ...content, clossing: isClosingDay };
+      if(isClosingDay.tipo==0){
+        contents.push(content)
+        continue
+      }
+    }
+
     //Es temporada
-    if (isSeason) {
+    if(isSeason) {
       //Existe temporada.
       //Dentro del rango de alguna temporada
       isSeason.map((s) => {
-        let auxDateFrom = obtenerTsOfStringDate(s.range.from);
-        let auxDateTo = obtenerTsOfStringDate(s.range.to);
+        let auxDateFrom = getTsDateForm(s.range.from);
+        let auxDateTo = getTsDateForm(s.range.to);
         if (auxDateFrom <= auxFromTs && auxDateTo >= auxFromTs) {
-          content = { ...content, season: { id: s.id } };
-        } else {
-          content = { ...content, season: false };
+          content = { ...content, season: { ...s } };
         }
       });
-    } else {
-      //No esta en temporada.
-      console.log("normal");
     }
+
+    //TODO...
+    // if(content.season){
+    //   content.season.quantityUserShifts.m
+    //   content.season.quantityUserShifts.t
+    //   content.season.quantityDaysFree
+      
+    // }else{
+
+    // }
+
     //*********************** */
     contents.push(content);
     auxFromTs += oneDay;
   }
+//************  WHILE-FIN  *************
+// *************************************
+
   console.log(contents);
 };
 
